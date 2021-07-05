@@ -1,13 +1,14 @@
 package com.stockmarket.user_management.controller;
 
-import com.stockmarket.user_management.domain.*;
+import com.stockmarket.user_management.domain.LoginRequest;
+import com.stockmarket.user_management.domain.LoginResponse;
+import com.stockmarket.user_management.domain.User;
 import com.stockmarket.user_management.security.JwtTokenUtil;
 import com.stockmarket.user_management.service.AppUserDetailsService;
 import com.stockmarket.user_management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -16,8 +17,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +56,7 @@ public class UserManagementController {
             String token = jwtTokenUtil.generateToken(userDetails);
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(r -> r.getAuthority()).collect(Collectors.toList());
-            LoginResponse response = new LoginResponse(token,roles.get(0));
+            LoginResponse response = new LoginResponse(token,roles.get(0), Instant.now());
             return new ResponseEntity(response, HttpStatus.OK);
         } else {
             return new ResponseEntity("Invalid Credentials", HttpStatus.BAD_REQUEST);
