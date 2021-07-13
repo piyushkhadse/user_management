@@ -15,7 +15,6 @@ public class AppUser implements UserDetails {
     private static final String ROLE_PREFIX = "ROLE_";
 
     private UserDto userdto;
-    private Collection<? extends GrantedAuthority> authorities;
 
     public AppUser(UserDto userdto) {
         this.userdto = userdto;

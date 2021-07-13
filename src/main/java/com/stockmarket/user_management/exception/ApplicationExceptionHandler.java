@@ -10,6 +10,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ApplicationException.class)
     public final ResponseEntity<Object> handleAllExceptions(ApplicationException ex) {
-        return new ResponseEntity(ex, HttpStatus.valueOf(ex.getStatusCode()));
+        return new ResponseEntity<>(ex, HttpStatus.valueOf(ex.getStatusCode()));
     }
 }

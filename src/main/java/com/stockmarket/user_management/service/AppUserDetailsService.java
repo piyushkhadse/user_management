@@ -37,8 +37,7 @@ public class AppUserDetailsService implements UserDetailsService {
         try {
             User user = userRepository.findByUserName(name);
             UserDto userdto = new UserDto(user.getUserName(), user.getPassword(), user.getRole());
-            AppUser appUser = new AppUser(userdto);
-            return appUser;
+            return new AppUser(userdto);
         } catch (Exception e) {
             logger.error().log("Error while finding user by username:{}",name,e);
             throw new ApplicationException(new Error("INTERNAL_SERVER_ERROR", "Internal Server Error"),500);

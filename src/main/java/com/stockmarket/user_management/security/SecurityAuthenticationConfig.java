@@ -24,6 +24,7 @@ public class SecurityAuthenticationConfig extends WebSecurityConfigurerAdapter {
         return new JwtRequestFilter();
     }
 
+    @Override
     @Bean
     public UserDetailsService userDetailsService() {
         return new AppUserDetailsService();

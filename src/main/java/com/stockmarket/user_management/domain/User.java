@@ -3,15 +3,7 @@ package com.stockmarket.user_management.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 
@@ -57,7 +49,7 @@ public class User {
     }
 
     public User(@NotNull int id, @NotNull String userName, @NotNull String password, @NotNull String firstName,
-                @NotNull String lastName, @NotNull String contactNumber, @NotNull String role) {
+                @NotNull String lastName, @NotNull String contactNumber) {
         super();
         this.id = id;
         this.userName = userName;

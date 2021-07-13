@@ -1,8 +1,10 @@
 package com.stockmarket.user_management.controller;
 
+import com.stockmarket.user_management.domain.Error;
 import com.stockmarket.user_management.domain.LoginRequest;
 import com.stockmarket.user_management.domain.LoginResponse;
 import com.stockmarket.user_management.domain.User;
+import com.stockmarket.user_management.exception.ApplicationException;
 import com.stockmarket.user_management.logger.StockMarketApplicationLogger;
 import com.stockmarket.user_management.security.JwtTokenUtil;
 import com.stockmarket.user_management.service.AppUserDetailsService;
@@ -45,7 +47,7 @@ public class UserManagementController {
     private StockMarketApplicationLogger logger = StockMarketApplicationLogger.getLogger(this.getClass());
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest authenticationRequest) throws Exception {
+    public ResponseEntity<Object> login(@RequestBody LoginRequest authenticationRequest) {
 
         logger.info().log("Inside login()");
 
@@ -62,27 +64,29 @@ public class UserManagementController {
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(r -> r.getAuthority()).collect(Collectors.toList());
             LoginResponse response = new LoginResponse(token,roles.get(0), Instant.now());
-            return new ResponseEntity(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
-            return new ResponseEntity("Invalid Credentials", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Invalid Credentials", HttpStatus.BAD_REQUEST);
         }
     }
 
-    private Authentication authenticate(String username, String password) throws Exception {
+    private Authentication authenticate(String username, String password) {
         try {
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
+            logger.error().log("Exception while authenticating user with username:{}",username,e);
+            throw new ApplicationException(new Error("USER_DISABLED","User is disabled"), 400);
         } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+            logger.error().log("Exception while authenticating user with username:{}",username,e);
+            throw new ApplicationException(new Error("INVALID_CREDENTIALS","Invalid Credentials"), 400);
         }
     }
 
 
     @PostMapping("/addUser")
-    public ResponseEntity addUser(@RequestBody User user) {
+    public ResponseEntity<Object> addUser(@RequestBody User user) {
         logger.info().log("Inside addUser()");
-        return new ResponseEntity(userService.addUser(user), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.addUser(user), HttpStatus.CREATED);
     }
 
 }

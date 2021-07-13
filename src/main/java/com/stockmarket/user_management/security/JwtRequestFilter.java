@@ -22,7 +22,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    private StockMarketApplicationLogger logger = StockMarketApplicationLogger.getLogger(this.getClass());
+    private StockMarketApplicationLogger applicationLogger = StockMarketApplicationLogger.getLogger(this.getClass());
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -39,19 +39,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
-                logger.error().log("Unable to get JWT Token");
+                applicationLogger.error().log("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
-                logger.error().log("JWT Token has expired");
+                applicationLogger.error().log("JWT Token has expired");
             }
         } else {
-            logger.info().log("JWT Token does not begin with Bearer String");
+            applicationLogger.info().log("JWT Token does not begin with Bearer String");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             Claims claims = jwtTokenUtil.getAllClaimsFromToken(jwtToken);
             String userRole = claims.get("role").toString().replace(ROLE_PREFIX, "");
             UserDetails userDetails = new AppUser(new UserDto(username, null, userRole));
-            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+            if (Boolean.TRUE.equals(jwtTokenUtil.validateToken(jwtToken, userDetails))) {
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
