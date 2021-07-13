@@ -3,6 +3,7 @@ package com.stockmarket.user_management.controller;
 import com.stockmarket.user_management.domain.LoginRequest;
 import com.stockmarket.user_management.domain.LoginResponse;
 import com.stockmarket.user_management.domain.User;
+import com.stockmarket.user_management.logger.StockMarketApplicationLogger;
 import com.stockmarket.user_management.security.JwtTokenUtil;
 import com.stockmarket.user_management.service.AppUserDetailsService;
 import com.stockmarket.user_management.service.UserService;
@@ -41,8 +42,12 @@ public class UserManagementController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    private StockMarketApplicationLogger logger = StockMarketApplicationLogger.getLogger(this.getClass());
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest authenticationRequest) throws Exception {
+
+        logger.info().log("Inside login()");
 
         Authentication authentication = authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
@@ -76,6 +81,7 @@ public class UserManagementController {
 
     @PostMapping("/addUser")
     public ResponseEntity addUser(@RequestBody User user) {
+        logger.info().log("Inside addUser()");
         return new ResponseEntity(userService.addUser(user), HttpStatus.CREATED);
     }
 
