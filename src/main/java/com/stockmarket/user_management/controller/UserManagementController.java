@@ -1,9 +1,7 @@
 package com.stockmarket.user_management.controller;
 
+import com.stockmarket.user_management.domain.*;
 import com.stockmarket.user_management.domain.Error;
-import com.stockmarket.user_management.domain.LoginRequest;
-import com.stockmarket.user_management.domain.LoginResponse;
-import com.stockmarket.user_management.domain.User;
 import com.stockmarket.user_management.exception.ApplicationException;
 import com.stockmarket.user_management.logger.StockMarketApplicationLogger;
 import com.stockmarket.user_management.security.JwtTokenUtil;
@@ -84,7 +82,7 @@ public class UserManagementController {
 
 
     @PostMapping("/addUser")
-    public ResponseEntity<Object> addUser(@RequestBody User user) {
+    public ResponseEntity<Object> addUser(@RequestBody AddUserRequest user) {
         logger.info().log("Inside addUser()");
         return new ResponseEntity<>(userService.addUser(user), HttpStatus.CREATED);
     }
